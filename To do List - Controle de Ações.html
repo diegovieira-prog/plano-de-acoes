@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plano de Ações — Controle e Tratativas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#EEF0EA;
+    --surface:#FFFFFF;
+    --surface-soft:#F6F7F3;
+    --ink:#1E2A24;
+    --ink-soft:#5B665F;
+    --ink-faint:#8B948D;
+    --line:#DCE1D8;
+    --line-strong:#C4CBC0;
+    --accent:#2F6F4E;
+    --accent-dark:#234F38;
+    --accent-bg:#E3EFE6;
+    --amber:#A5690C;
+    --amber-bg:#FBEDD7;
+    --amber-line:#E8C98C;
+    --green:#2F6F4E;
+    --green-bg:#E3EFE6;
+    --green-line:#A9CBB6;
+    --red:#A03A28;
+    --red-bg:#F7E5DF;
+    --red-line:#E3AB99;
+    --radius-s:4px;
+    --radius-m:8px;
+    --shadow-card:0 1px 2px rgba(30,42,36,0.06), 0 1px 1px rgba(30,42,36,0.04);
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'IBM Plex Sans', sans-serif;
+    font-size:15px;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    margin:0;
+    letter-spacing:-0.01em;
+  }
+  button{font-family:inherit;}
+  :focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+
+  /* ---------- Shell ---------- */
+  .shell{max-width:1280px; margin:0 auto; padding:0 28px 64px;}
+
+  header.top{
+    padding:34px 0 22px;
+    display:flex; justify-content:space-between; align-items:flex-end;
+    flex-wrap:wrap; gap:18px;
+    border-bottom:1px solid var(--line-strong);
+    margin-bottom:26px;
+  }
+  .brand .kicker{
+    font-size:12.5px; color:var(--accent); font-weight:600;
+    text-transform:uppercase; letter-spacing:0.06em; margin-bottom:6px;
+  }
+  .brand h1{font-size:30px; color:var(--ink);}
+  .brand p{margin:6px 0 0; color:var(--ink-soft); font-size:14px; max-width:480px;}
+
+  nav.tabs{display:flex; gap:4px; background:var(--surface-soft); padding:4px; border-radius:var(--radius-m); border:1px solid var(--line);}
+  nav.tabs button{
+    border:none; background:transparent; padding:9px 18px; border-radius:6px;
+    font-size:14px; font-weight:600; color:var(--ink-soft); cursor:pointer;
+    transition:background .15s ease, color .15s ease;
+  }
+  nav.tabs button.active{background:var(--ink); color:#fff;}
+  nav.tabs button:not(.active):hover{background:#fff; color:var(--ink);}
+
+  .view{display:none;}
+  .view.active{display:block;}
+
+  /* ---------- Toolbar (lançamento) ---------- */
+  .toolbar{
+    display:flex; justify-content:space-between; align-items:center;
+    gap:14px; flex-wrap:wrap; margin-bottom:16px;
+  }
+  .search-box{
+    position:relative; flex:1; min-width:220px; max-width:360px;
+  }
+  .search-box input{
+    width:100%; padding:9px 12px 9px 34px; border:1px solid var(--line-strong);
+    border-radius:var(--radius-s); background:var(--surface); font-size:14px; color:var(--ink);
+  }
+  .search-box svg{position:absolute; left:11px; top:50%; transform:translateY(-50%); color:var(--ink-faint);}
+
+  .btn{
+    display:inline-flex; align-items:center; gap:7px;
+    padding:9px 16px; border-radius:var(--radius-s); border:1px solid transparent;
+    font-size:14px; font-weight:600; cursor:pointer; white-space:nowrap;
+    transition:transform .08s ease, background .15s ease, border-color .15s ease;
+  }
+  .btn:active{transform:translateY(1px);}
+  .btn-primary{background:var(--accent); color:#fff;}
+  .btn-primary:hover{background:var(--accent-dark);}
+  .btn-ghost{background:var(--surface); color:var(--ink); border-color:var(--line-strong);}
+  .btn-ghost:hover{border-color:var(--ink-soft);}
+  .btn-text{background:none; color:var(--ink-soft); border:none; padding:6px 8px; font-weight:600;}
+  .btn-text:hover{color:var(--ink);}
+  .btn-danger{background:var(--red-bg); color:var(--red); border-color:var(--red-line);}
+  .btn-danger:hover{background:var(--red-line);}
+  .btn-sm{padding:5px 10px; font-size:12.5px;}
+
+  /* ---------- Table ---------- */
+  .table-wrap{
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-m);
+    overflow:hidden; box-shadow:var(--shadow-card);
+  }
+  table{width:100%; border-collapse:collapse;}
+  thead th{
+    text-align:left; font-size:11.5px; font-weight:600; color:var(--ink-soft);
+    text-transform:uppercase; letter-spacing:0.05em;
+    padding:12px 14px; background:var(--surface-soft); border-bottom:1px solid var(--line);
+    white-space:nowrap;
+  }
+  tbody td{
+    padding:13px 14px; border-bottom:1px solid var(--line); font-size:13.8px;
+    vertical-align:top;
+  }
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr:hover{background:#FAFBF8;}
+  tbody tr.is-overdue{box-shadow: inset 3px 0 0 var(--red);}
+  .id-badge{
+    font-family:'IBM Plex Mono', monospace; font-size:12px; font-weight:600;
+    color:var(--ink-soft); background:var(--surface-soft); border:1px solid var(--line);
+    padding:2px 7px; border-radius:4px; display:inline-block;
+  }
+  .titulo-cell{font-weight:600; color:var(--ink); max-width:200px;}
+  .desc-cell{color:var(--ink-soft); max-width:260px;}
+  .comment-cell{color:var(--ink-soft); max-width:200px; font-style:italic;}
+  .muted{color:var(--ink-faint);}
+  .actions-cell{display:flex; gap:6px; white-space:nowrap;}
+
+  .pill{
+    display:inline-flex; align-items:center; gap:5px; padding:4px 10px;
+    border-radius:20px; font-size:12px; font-weight:600; border:1px solid transparent;
+    white-space:nowrap;
+  }
+  .pill::before{content:''; width:6px; height:6px; border-radius:50%; background:currentColor;}
+  .pill.andamento{background:var(--amber-bg); color:var(--amber); border-color:var(--amber-line);}
+  .pill.concluido{background:var(--green-bg); color:var(--green); border-color:var(--green-line);}
+  .pill-sub{font-size:11px; color:var(--red); font-weight:600; margin-top:3px; display:block;}
+
+  .empty-state{padding:64px 20px; text-align:center; color:var(--ink-soft);}
+  .empty-state h3{font-size:18px; margin-bottom:6px; color:var(--ink);}
+
+  /* ---------- Indicadores view ---------- */
+  .filter-bar{
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-m);
+    padding:16px 18px; display:flex; gap:14px; flex-wrap:wrap; align-items:flex-end;
+    margin-bottom:22px; box-shadow:var(--shadow-card);
+  }
+  .field-group{display:flex; flex-direction:column; gap:5px;}
+  .field-group label{font-size:11.5px; font-weight:600; color:var(--ink-soft); text-transform:uppercase; letter-spacing:0.04em;}
+  .field-group select, .field-group input{
+    padding:8px 10px; border:1px solid var(--line-strong); border-radius:var(--radius-s);
+    font-size:13.5px; color:var(--ink); background:var(--surface); min-width:160px;
+  }
+
+  .kpi-grid{
+    display:grid; grid-template-columns:repeat(5, 1fr); gap:14px; margin-bottom:26px;
+  }
+  @media (max-width:1050px){ .kpi-grid{grid-template-columns:repeat(2, 1fr);} }
+  .kpi-card{
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-m);
+    padding:18px 18px 16px; cursor:pointer; text-align:left; box-shadow:var(--shadow-card);
+    transition:border-color .15s ease, transform .1s ease;
+    display:flex; flex-direction:column; gap:2px; position:relative;
+  }
+  .kpi-card:hover{border-color:var(--line-strong); transform:translateY(-1px);}
+  .kpi-card.selected{border-color:var(--accent); box-shadow:0 0 0 1px var(--accent) inset;}
+  .kpi-card .kpi-label{font-size:12px; font-weight:600; color:var(--ink-soft); text-transform:uppercase; letter-spacing:0.04em;}
+  .kpi-card .kpi-value{font-family:'Fraunces', serif; font-size:34px; font-weight:600; color:var(--ink); margin-top:4px;}
+  .kpi-card .kpi-sub{font-size:12.5px; color:var(--ink-faint); margin-top:2px;}
+  .kpi-card.tone-total .kpi-value{color:var(--ink);}
+  .kpi-card.tone-andamento .kpi-value{color:var(--amber);}
+  .kpi-card.tone-concluidas .kpi-value{color:var(--green);}
+  .kpi-card.tone-atraso .kpi-value{color:var(--red);}
+  .kpi-card.tone-prazo .kpi-value{color:var(--accent);}
+
+  .section-heading{display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;}
+  .section-heading h2{font-size:18px;}
+  .section-heading .hint{font-size:12.5px; color:var(--ink-faint);}
+
+  .breakdown{
+    display:grid; grid-template-columns:1.1fr 1fr; gap:16px; margin-bottom:26px;
+  }
+  @media (max-width:900px){ .breakdown{grid-template-columns:1fr;} }
+  .breakdown-card{
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-m);
+    padding:16px 18px; box-shadow:var(--shadow-card);
+  }
+  .breakdown-card h3{font-size:14.5px; margin-bottom:12px;}
+  .bar-row{display:flex; align-items:center; gap:10px; margin-bottom:10px;}
+  .bar-row:last-child{margin-bottom:0;}
+  .bar-row .bar-label{width:120px; font-size:13px; color:var(--ink-soft); flex-shrink:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .bar-track{flex:1; height:8px; background:var(--surface-soft); border-radius:4px; overflow:hidden;}
+  .bar-fill{height:100%; background:var(--accent); border-radius:4px;}
+  .bar-count{width:34px; text-align:right; font-size:12.5px; font-weight:600; color:var(--ink-soft); font-family:'IBM Plex Mono', monospace;}
+
+  /* ---------- Modal ---------- */
+  .overlay{
+    display:none; position:fixed; inset:0; background:rgba(20,26,22,0.45);
+    align-items:flex-start; justify-content:center; padding:44px 16px; z-index:50; overflow-y:auto;
+  }
+  .overlay.active{display:flex;}
+  .modal{
+    background:var(--surface); border-radius:var(--radius-m); width:100%; max-width:620px;
+    box-shadow:0 20px 60px rgba(20,26,22,0.25); border:1px solid var(--line);
+  }
+  .modal-head{padding:20px 24px 16px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:center;}
+  .modal-head h2{font-size:19px;}
+  .modal-close{background:none; border:none; cursor:pointer; color:var(--ink-soft); font-size:20px; line-height:1; padding:4px;}
+  .modal-close:hover{color:var(--ink);}
+  .modal-body{padding:22px 24px; display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+  .modal-body .full{grid-column:1 / -1;}
+  .field label{display:block; font-size:12.5px; font-weight:600; color:var(--ink-soft); margin-bottom:6px;}
+  .field input, .field select, .field textarea{
+    width:100%; padding:9px 11px; border:1px solid var(--line-strong); border-radius:var(--radius-s);
+    font-size:14px; color:var(--ink); font-family:inherit; background:var(--surface);
+  }
+  .field textarea{resize:vertical; min-height:60px;}
+  .modal-foot{padding:16px 24px 22px; display:flex; justify-content:flex-end; gap:10px; border-top:1px solid var(--line);}
+
+  .status-toggle{display:flex; gap:8px;}
+  .status-toggle label{
+    flex:1; display:flex; align-items:center; justify-content:center; gap:6px;
+    padding:9px 8px; border:1px solid var(--line-strong); border-radius:var(--radius-s);
+    font-size:13px; font-weight:600; color:var(--ink-soft); cursor:pointer;
+  }
+  .status-toggle input{width:auto; margin:0;}
+  .status-toggle input:checked + span{color:inherit;}
+  .status-toggle label:has(input:checked){border-color:var(--accent); background:var(--accent-bg); color:var(--accent-dark);}
+
+  .footer-note{margin-top:30px; font-size:12.5px; color:var(--ink-faint); display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;}
+  .footer-note a{color:var(--ink-soft);}
+  #importFile{display:none;}
+
+  /* ---------- Auth ---------- */
+  .auth-overlay{position:fixed;inset:0;background:rgba(30,42,36,.48);display:none;align-items:center;justify-content:center;padding:20px;z-index:1000;}
+  .auth-overlay.active{display:flex;}
+  .auth-card{width:min(420px,100%);background:var(--surface);border:1px solid var(--line);border-radius:10px;box-shadow:0 12px 40px rgba(30,42,36,.18);padding:28px;}
+  .auth-card h2{font-size:25px;margin-bottom:6px;}
+  .auth-card p{margin:0 0 20px;color:var(--ink-soft);font-size:14px;}
+  .auth-field{margin-bottom:14px;}
+  .auth-field label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;}
+  .auth-field input{width:100%;padding:10px 12px;border:1px solid var(--line-strong);border-radius:var(--radius-s);background:#fff;color:var(--ink);font:inherit;}
+  .auth-error{display:none;margin:0 0 14px;padding:9px 11px;border:1px solid var(--red-line);background:var(--red-bg);color:var(--red);border-radius:var(--radius-s);font-size:13px;}
+  .auth-error.show{display:block;}
+  .auth-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px;}
+  .session-bar{display:none;align-items:center;gap:8px;font-size:13px;color:var(--ink-soft);}
+  .session-bar.show{display:flex;}
+  .session-user{font-weight:600;color:var(--ink);}
+
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<div class="shell">
+
+  <header class="top">
+    <div class="brand">
+      <div class="kicker">Gerência SMA</div>
+      <h1>Plano de Ações</h1>
+      <p>Controle e tratativa das ações abertas — do registro ao fechamento no prazo.</p>
+    </div>
+    <nav class="tabs">
+      <button data-tab="lancamento">Lançamento</button>
+      <button class="active" data-tab="indicadores">Indicadores</button>
+    </nav>
+    <div class="session-bar" id="sessionBar">
+      <span>Conectado como <span class="session-user">Admin</span></span>
+      <button class="btn btn-ghost btn-sm" id="btnLogout">Sair</button>
+    </div>
+  </header>
+
+  <!-- ===================== LANÇAMENTO ===================== -->
+  <section class="view active" id="view-lancamento">
+    <div class="toolbar">
+      <div class="search-box">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input type="text" id="searchInput" placeholder="Buscar por identificação, descrição ou responsável…">
+      </div>
+      <button class="btn btn-primary" id="btnNewAction">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+        Nova ação
+      </button>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Identificação da ação</th>
+            <th>Início</th>
+            <th>Descrição</th>
+            <th>Responsável</th>
+            <th>Prazo</th>
+            <th>Conclusão</th>
+            <th>Status</th>
+            <th>Comentário</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+      <div class="empty-state" id="emptyState" style="display:none;">
+        <h3>Nenhuma ação encontrada</h3>
+        <p>Ajuste a busca ou cadastre uma nova ação.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== INDICADORES ===================== -->
+  <section class="view" id="view-indicadores">
+
+    <div class="filter-bar">
+      <div class="field-group">
+        <label>Responsável</label>
+        <select id="filterResponsavel"><option value="">Todos</option></select>
+      </div>
+      <div class="field-group">
+        <label>Status</label>
+        <select id="filterStatus">
+          <option value="">Todos</option>
+          <option value="Em andamento">Em andamento</option>
+          <option value="Concluído">Concluído</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label>Início a partir de</label>
+        <input type="date" id="filterInicio">
+      </div>
+      <div class="field-group">
+        <label>Prazo até</label>
+        <input type="date" id="filterPrazo">
+      </div>
+      <button class="btn btn-ghost btn-sm" id="btnClearFilters" style="height:37px;">Limpar filtros</button>
+    </div>
+
+    <div class="kpi-grid">
+      <button class="kpi-card tone-total" data-kpi="total">
+        <span class="kpi-label">Total de ações</span>
+        <span class="kpi-value" id="kpiTotal">0</span>
+        <span class="kpi-sub">no recorte atual</span>
+      </button>
+      <button class="kpi-card tone-andamento" data-kpi="andamento">
+        <span class="kpi-label">Em andamento</span>
+        <span class="kpi-value" id="kpiAndamento">0</span>
+        <span class="kpi-sub" id="kpiAndamentoPct">0% do total</span>
+      </button>
+      <button class="kpi-card tone-concluidas" data-kpi="concluidas">
+        <span class="kpi-label">Concluídas</span>
+        <span class="kpi-value" id="kpiConcluidas">0</span>
+        <span class="kpi-sub" id="kpiConcluidasPct">0% do total</span>
+      </button>
+      <button class="kpi-card tone-atraso" data-kpi="atraso">
+        <span class="kpi-label">Em atraso</span>
+        <span class="kpi-value" id="kpiAtraso">0</span>
+        <span class="kpi-sub" id="kpiAtrasoPct">0% do total</span>
+      </button>
+      <button class="kpi-card tone-prazo" data-kpi="prazo">
+        <span class="kpi-label">Concluídas no prazo</span>
+        <span class="kpi-value" id="kpiPrazo">0</span>
+        <span class="kpi-sub" id="kpiPrazoPct">0% do total</span>
+      </button>
+    </div>
+
+    <div class="breakdown">
+      <div class="breakdown-card">
+        <h3>Ações por responsável</h3>
+        <div id="breakdownResp"></div>
+      </div>
+      <div class="breakdown-card">
+        <h3>Distribuição por status</h3>
+        <div id="breakdownStatus"></div>
+      </div>
+    </div>
+
+    <div class="section-heading">
+      <h2>Ações no recorte selecionado</h2>
+      <span class="hint" id="filterHint">clique em um indicador acima para filtrar a lista</span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Identificação da ação</th>
+            <th>Responsável</th>
+            <th>Prazo</th>
+            <th>Conclusão</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="kpiTableBody"></tbody>
+      </table>
+      <div class="empty-state" id="kpiEmptyState" style="display:none;">
+        <h3>Nenhuma ação neste recorte</h3>
+        <p>Experimente ajustar os filtros ou limpar a seleção.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="footer-note">
+    <span>Os dados são armazenados no Supabase. O acesso aos lançamentos é protegido.</span>
+    <span>
+      <button class="btn-text" id="btnExport">Exportar dados (.json)</button>
+    </span>
+  </div>
+</div>
+
+<!-- ===================== AUTENTICAÇÃO ===================== -->
+<div class="auth-overlay" id="authOverlay">
+  <div class="auth-card">
+    <h2>Acesso Lançamentos</h2>
+    <p>Informe suas credenciais para cadastrar, editar ou excluir ações.</p>
+    <div class="auth-error" id="authError"></div>
+    <form id="authForm">
+      <div class="auth-field">
+        <label for="authLogin">Usuário</label>
+        <input type="text" id="authLogin" autocomplete="username" placeholder="Admin" required>
+      </div>
+      <div class="auth-field">
+        <label for="authPassword">Senha</label>
+        <input type="password" id="authPassword" autocomplete="current-password" placeholder="Senha" required>
+      </div>
+      <div class="auth-actions">
+        <button type="button" class="btn btn-ghost" id="btnAuthCancel">Cancelar</button>
+        <button type="submit" class="btn btn-primary" id="btnAuthSubmit">Entrar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ===================== MODAL ===================== -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 id="modalTitle">Nova ação</h2>
+      <button class="modal-close" id="modalClose">&times;</button>
+    </div>
+    <form id="actionForm">
+      <div class="modal-body">
+        <div class="field full">
+          <label>Identificação da ação</label>
+          <input type="text" id="f_titulo" placeholder="Ex.: Instalar guarda-corpo na plataforma 3" required>
+        </div>
+        <div class="field full">
+          <label>Descrição da ação</label>
+          <textarea id="f_descricao" placeholder="Detalhe o que precisa ser feito"></textarea>
+        </div>
+        <div class="field">
+          <label>Responsável</label>
+          <input type="text" id="f_responsavel" placeholder="Nome do responsável" required>
+        </div>
+        <div class="field">
+          <label>Data de início</label>
+          <input type="date" id="f_inicio">
+        </div>
+        <div class="field">
+          <label>Prazo</label>
+          <input type="date" id="f_prazo">
+        </div>
+        <div class="field">
+          <label>Data de conclusão</label>
+          <input type="date" id="f_conclusao">
+        </div>
+        <div class="field full">
+          <label>Status</label>
+          <div class="status-toggle">
+            <label><input type="radio" name="f_status" value="Em andamento" checked><span>Em andamento</span></label>
+            <label><input type="radio" name="f_status" value="Concluído"><span>Concluído</span></label>
+          </div>
+        </div>
+        <div class="field full">
+          <label>Comentário</label>
+          <textarea id="f_comentario" placeholder="Observações sobre a tratativa"></textarea>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button type="button" class="btn btn-ghost" id="btnDelete" style="display:none; margin-right:auto;">Excluir ação</button>
+        <button type="button" class="btn btn-ghost" id="btnCancel">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Salvar ação</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------- Supabase ----------
+  const SUPABASE_URL = "https://norapizusjjofexumanr.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_EeKo8hn2CIZwRSRjDOHPjg_SHKKXP_S";
+  const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  const ADMIN_EMAIL = "admin@planoacoes.local";
+
+  let actions = [];
+  let editingId = null;
+  let currentSession = null;
+  let kpiSelected = null;
+  let loadingActions = false;
+
+  const todayStr = new Date().toISOString().slice(0,10);
+
+  // ---------- Helpers ----------
+  function fmtDate(d){
+    if(!d) return "—";
+    const [y,m,day] = d.split("-");
+    return `${day}/${m}/${y}`;
+  }
+  function isOverdue(a){
+    return a.status === "Em andamento" && a.prazo && a.prazo < todayStr;
+  }
+  function isOnTime(a){
+    return a.status === "Concluído" && a.prazo && a.conclusao && a.conclusao <= a.prazo;
+  }
+  function pct(n, total){
+    if(!total) return "0%";
+    return Math.round((n/total)*100) + "%";
+  }
+  function escapeHtml(str){
+    if(str === null || str === undefined) return "";
+    const div = document.createElement("div");
+    div.textContent = String(str);
+    return div.innerHTML;
+  }
+  function isAuthenticated(){
+    return !!currentSession;
+  }
+
+  function showAuth(){
+    document.getElementById("authError").classList.remove("show");
+    document.getElementById("authForm").reset();
+    document.getElementById("authLogin").value = "Admin";
+    document.getElementById("authOverlay").classList.add("active");
+    setTimeout(()=>document.getElementById("authPassword").focus(), 50);
+  }
+  function hideAuth(){
+    document.getElementById("authOverlay").classList.remove("active");
+  }
+  function showAuthError(message){
+    const el = document.getElementById("authError");
+    el.textContent = message;
+    el.classList.add("show");
+  }
+  function updateSessionUI(){
+    document.getElementById("sessionBar").classList.toggle("show", isAuthenticated());
+  }
+
+  // ---------- Tabs ----------
+  document.querySelectorAll("nav.tabs button").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      if(btn.dataset.tab === "lancamento" && !isAuthenticated()){
+        showAuth();
+        return;
+      }
+      document.querySelectorAll("nav.tabs button").forEach(b=>b.classList.remove("active"));
+      btn.classList.add("active");
+      document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+      document.getElementById("view-"+btn.dataset.tab).classList.add("active");
+      if(btn.dataset.tab === "indicadores") renderIndicadores();
+      if(btn.dataset.tab === "lancamento") renderLancamento();
+    });
+  });
+
+  // ---------- Supabase: carregar ações ----------
+  async function loadActions(){
+    if(loadingActions) return;
+    loadingActions = true;
+    try{
+      const { data, error } = await supabaseClient
+        .from("acoes")
+        .select("id,titulo,descricao,responsavel,inicio,prazo,conclusao,status,comentario")
+        .order("id", { ascending:true });
+      if(error) throw error;
+      actions = data || [];
+      renderLancamento();
+      renderIndicadores();
+    }catch(error){
+      console.error(error);
+      alert("Não foi possível carregar as ações do Supabase. Verifique a conexão e tente novamente.");
+    }finally{
+      loadingActions = false;
+    }
+  }
+
+  // ---------- Lançamento: render table ----------
+  function renderLancamento(){
+    const q = document.getElementById("searchInput").value.trim().toLowerCase();
+    const list = actions.filter(a=>{
+      if(!q) return true;
+      return (a.titulo+" "+(a.descricao||"")+" "+a.responsavel).toLowerCase().includes(q);
+    }).sort((a,b)=>a.id-b.id);
+
+    const body = document.getElementById("tableBody");
+    const empty = document.getElementById("emptyState");
+    body.innerHTML = "";
+    empty.style.display = list.length ? "none" : "block";
+
+    list.forEach(a=>{
+      const tr = document.createElement("tr");
+      if(isOverdue(a)) tr.classList.add("is-overdue");
+      const statusPill = a.status === "Concluído"
+        ? `<span class="pill concluido">Concluído</span>` + (a.conclusao && !isOnTime(a) ? `<span class="pill-sub">com atraso</span>` : "")
+        : `<span class="pill andamento">Em andamento</span>` + (isOverdue(a) ? `<span class="pill-sub">atrasada</span>` : "");
+      tr.innerHTML = `
+        <td><span class="id-badge">#${String(a.id).padStart(3,"0")}</span></td>
+        <td class="titulo-cell">${escapeHtml(a.titulo)}</td>
+        <td>${fmtDate(a.inicio)}</td>
+        <td class="desc-cell">${escapeHtml(a.descricao) || '<span class="muted">—</span>'}</td>
+        <td>${escapeHtml(a.responsavel)}</td>
+        <td>${fmtDate(a.prazo)}</td>
+        <td>${fmtDate(a.conclusao)}</td>
+        <td>${statusPill}</td>
+        <td class="comment-cell">${escapeHtml(a.comentario) || '<span class="muted">—</span>'}</td>
+        <td class="actions-cell"><button class="btn btn-ghost btn-sm" data-edit="${a.id}">Editar</button></td>
+      `;
+      body.appendChild(tr);
+    });
+
+    body.querySelectorAll("[data-edit]").forEach(b=>{
+      b.addEventListener("click", ()=>openModal(Number(b.dataset.edit)));
+    });
+  }
+
+  document.getElementById("searchInput").addEventListener("input", renderLancamento);
+
+  // ---------- Modal ----------
+  const overlay = document.getElementById("overlay");
+  const form = document.getElementById("actionForm");
+
+  function openModal(id){
+    if(!isAuthenticated()){
+      showAuth();
+      return;
+    }
+    editingId = id || null;
+    document.getElementById("modalTitle").textContent = id ? "Editar ação" : "Nova ação";
+    document.getElementById("btnDelete").style.display = id ? "inline-flex" : "none";
+
+    if(id){
+      const a = actions.find(x=>x.id===id);
+      if(!a) return;
+      document.getElementById("f_titulo").value = a.titulo || "";
+      document.getElementById("f_descricao").value = a.descricao || "";
+      document.getElementById("f_responsavel").value = a.responsavel || "";
+      document.getElementById("f_inicio").value = a.inicio || "";
+      document.getElementById("f_prazo").value = a.prazo || "";
+      document.getElementById("f_conclusao").value = a.conclusao || "";
+      document.getElementById("f_comentario").value = a.comentario || "";
+      const statusRadio = document.querySelector(`input[name="f_status"][value="${a.status}"]`);
+      if(statusRadio) statusRadio.checked = true;
+    } else {
+      form.reset();
+      document.getElementById("f_inicio").value = todayStr;
+      document.querySelector('input[name="f_status"][value="Em andamento"]').checked = true;
+    }
+    overlay.classList.add("active");
+  }
+  function closeModal(){
+    overlay.classList.remove("active");
+    editingId = null;
+  }
+  document.getElementById("btnNewAction").addEventListener("click", ()=>openModal(null));
+  document.getElementById("modalClose").addEventListener("click", closeModal);
+  document.getElementById("btnCancel").addEventListener("click", closeModal);
+  overlay.addEventListener("click", (e)=>{ if(e.target === overlay) closeModal(); });
+
+  form.addEventListener("submit", async (e)=>{
+    e.preventDefault();
+    if(!isAuthenticated()){
+      showAuth();
+      return;
+    }
+    const data = {
+      titulo: document.getElementById("f_titulo").value.trim(),
+      descricao: document.getElementById("f_descricao").value.trim() || null,
+      responsavel: document.getElementById("f_responsavel").value.trim(),
+      inicio: document.getElementById("f_inicio").value || null,
+      prazo: document.getElementById("f_prazo").value || null,
+      conclusao: document.getElementById("f_conclusao").value || null,
+      status: document.querySelector('input[name="f_status"]:checked').value,
+      comentario: document.getElementById("f_comentario").value.trim() || null
+    };
+
+    const submitBtn = form.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    try{
+      if(editingId){
+        const { data: updated, error } = await supabaseClient
+          .from("acoes")
+          .update(data)
+          .eq("id", editingId)
+          .select("id,titulo,descricao,responsavel,inicio,prazo,conclusao,status,comentario")
+          .single();
+        if(error) throw error;
+        const idx = actions.findIndex(x=>x.id===editingId);
+        if(idx >= 0) actions[idx] = updated;
+      } else {
+        const { data: created, error } = await supabaseClient
+          .from("acoes")
+          .insert(data)
+          .select("id,titulo,descricao,responsavel,inicio,prazo,conclusao,status,comentario")
+          .single();
+        if(error) throw error;
+        actions.push(created);
+      }
+      closeModal();
+      renderLancamento();
+      renderIndicadores();
+    }catch(error){
+      console.error(error);
+      alert("Não foi possível salvar a ação. Verifique seu acesso e tente novamente.");
+    }finally{
+      submitBtn.disabled = false;
+    }
+  });
+
+  document.getElementById("btnDelete").addEventListener("click", async ()=>{
+    if(!editingId || !isAuthenticated()) return;
+    if(!confirm("Excluir esta ação? Essa operação não pode ser desfeita.")) return;
+    const btn = document.getElementById("btnDelete");
+    btn.disabled = true;
+    try{
+      const { error } = await supabaseClient.from("acoes").delete().eq("id", editingId);
+      if(error) throw error;
+      actions = actions.filter(a=>a.id!==editingId);
+      closeModal();
+      renderLancamento();
+      renderIndicadores();
+    }catch(error){
+      console.error(error);
+      alert("Não foi possível excluir a ação. Verifique seu acesso e tente novamente.");
+    }finally{
+      btn.disabled = false;
+    }
+  });
+
+  // ---------- Indicadores ----------
+  function getFiltered(){
+    const resp = document.getElementById("filterResponsavel").value;
+    const status = document.getElementById("filterStatus").value;
+    const inicioDe = document.getElementById("filterInicio").value;
+    const prazoAte = document.getElementById("filterPrazo").value;
+
+    return actions.filter(a=>{
+      if(resp && a.responsavel !== resp) return false;
+      if(status && a.status !== status) return false;
+      if(inicioDe && (!a.inicio || a.inicio < inicioDe)) return false;
+      if(prazoAte && (!a.prazo || a.prazo > prazoAte)) return false;
+      if(kpiSelected === "andamento" && a.status !== "Em andamento") return false;
+      if(kpiSelected === "concluidas" && a.status !== "Concluído") return false;
+      if(kpiSelected === "atraso" && !isOverdue(a)) return false;
+      if(kpiSelected === "prazo" && !isOnTime(a)) return false;
+      return true;
+    });
+  }
+
+  function populateResponsavelFilter(){
+    const sel = document.getElementById("filterResponsavel");
+    const current = sel.value;
+    const names = [...new Set(actions.map(a=>a.responsavel).filter(Boolean))].sort();
+    sel.innerHTML = '<option value="">Todos</option>' + names.map(n=>`<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join("");
+    sel.value = names.includes(current) ? current : "";
+  }
+
+  function renderIndicadores(){
+    populateResponsavelFilter();
+    const filtered = getFiltered();
+    const total = filtered.length;
+    const andamento = filtered.filter(a=>a.status==="Em andamento").length;
+    const concluidas = filtered.filter(a=>a.status==="Concluído").length;
+    const atraso = filtered.filter(isOverdue).length;
+    const noPrazo = filtered.filter(isOnTime).length;
+
+    document.getElementById("kpiTotal").textContent = total;
+    document.getElementById("kpiAndamento").textContent = andamento;
+    document.getElementById("kpiAndamentoPct").textContent = pct(andamento,total) + " do total";
+    document.getElementById("kpiConcluidas").textContent = concluidas;
+    document.getElementById("kpiConcluidasPct").textContent = pct(concluidas,total) + " do total";
+    document.getElementById("kpiAtraso").textContent = atraso;
+    document.getElementById("kpiAtrasoPct").textContent = pct(atraso,total) + " do total";
+    document.getElementById("kpiPrazo").textContent = noPrazo;
+    document.getElementById("kpiPrazoPct").textContent = pct(noPrazo,total) + " do total";
+
+    document.querySelectorAll(".kpi-card").forEach(c=>c.classList.toggle("selected", c.dataset.kpi === kpiSelected));
+    document.getElementById("filterHint").textContent = kpiSelected
+      ? "clique novamente no indicador para limpar o recorte"
+      : "clique em um indicador acima para filtrar a lista";
+
+    const byResp = {};
+    filtered.forEach(a=>{ byResp[a.responsavel] = (byResp[a.responsavel]||0) + 1; });
+    const respEntries = Object.entries(byResp).sort((a,b)=>b[1]-a[1]);
+    const maxResp = respEntries.length ? respEntries[0][1] : 1;
+    document.getElementById("breakdownResp").innerHTML = respEntries.length
+      ? respEntries.map(([name,count])=>`<div class="bar-row"><span class="bar-label" title="${escapeHtml(name)}">${escapeHtml(name)}</span><div class="bar-track"><div class="bar-fill" style="width:${(count/maxResp)*100}%"></div></div><span class="bar-count">${count}</span></div>`).join("")
+      : '<p class="muted" style="font-size:13px;">Sem dados para este recorte.</p>';
+
+    const statusEntries = [["Em andamento", andamento, "var(--amber)"],["Concluído", concluidas, "var(--green)"]];
+    const maxStatus = Math.max(andamento, concluidas, 1);
+    document.getElementById("breakdownStatus").innerHTML = statusEntries.map(([name,count,color])=>`<div class="bar-row"><span class="bar-label">${name}</span><div class="bar-track"><div class="bar-fill" style="width:${(count/maxStatus)*100}%; background:${color};"></div></div><span class="bar-count">${count}</span></div>`).join("");
+
+    const body = document.getElementById("kpiTableBody");
+    const empty = document.getElementById("kpiEmptyState");
+    body.innerHTML = "";
+    empty.style.display = filtered.length ? "none" : "block";
+    [...filtered].sort((a,b)=>a.id-b.id).forEach(a=>{
+      const tr = document.createElement("tr");
+      if(isOverdue(a)) tr.classList.add("is-overdue");
+      const statusPill = a.status === "Concluído"
+        ? `<span class="pill concluido">Concluído</span>`
+        : `<span class="pill andamento">Em andamento</span>` + (isOverdue(a) ? `<span class="pill-sub">atrasada</span>` : "");
+      tr.innerHTML = `<td><span class="id-badge">#${String(a.id).padStart(3,"0")}</span></td><td class="titulo-cell">${escapeHtml(a.titulo)}</td><td>${escapeHtml(a.responsavel)}</td><td>${fmtDate(a.prazo)}</td><td>${fmtDate(a.conclusao)}</td><td>${statusPill}</td>`;
+      body.appendChild(tr);
+    });
+  }
+
+  document.querySelectorAll(".kpi-card").forEach(card=>{
+    card.addEventListener("click", ()=>{
+      const key = card.dataset.kpi;
+      kpiSelected = (kpiSelected === key || key === "total") ? null : key;
+      renderIndicadores();
+    });
+  });
+
+  ["filterResponsavel","filterStatus","filterInicio","filterPrazo"].forEach(id=>{
+    document.getElementById(id).addEventListener("change", renderIndicadores);
+  });
+  document.getElementById("btnClearFilters").addEventListener("click", ()=>{
+    document.getElementById("filterResponsavel").value = "";
+    document.getElementById("filterStatus").value = "";
+    document.getElementById("filterInicio").value = "";
+    document.getElementById("filterPrazo").value = "";
+    kpiSelected = null;
+    renderIndicadores();
+  });
+
+  // ---------- Export ----------
+  document.getElementById("btnExport").addEventListener("click", ()=>{
+    const blob = new Blob([JSON.stringify(actions, null, 2)], {type:"application/json"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "plano_de_acoes_" + todayStr + ".json";
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  // ---------- Autenticação ----------
+  document.getElementById("authForm").addEventListener("submit", async (e)=>{
+    e.preventDefault();
+    const login = document.getElementById("authLogin").value.trim();
+    const password = document.getElementById("authPassword").value;
+    const submit = document.getElementById("btnAuthSubmit");
+    if(login.toLowerCase() !== "admin"){
+      showAuthError("Usuário ou senha inválidos.");
+      return;
+    }
+    submit.disabled = true;
+    submit.textContent = "Entrando...";
+    try{
+      const { data, error } = await supabaseClient.auth.signInWithPassword({
+        email: ADMIN_EMAIL,
+        password
+      });
+      if(error) throw error;
+      currentSession = data.session;
+      updateSessionUI();
+      hideAuth();
+      const launchBtn = document.querySelector('nav.tabs button[data-tab="lancamento"]');
+      launchBtn.click();
+    }catch(error){
+      console.error(error);
+      showAuthError("Usuário ou senha inválidos.");
+    }finally{
+      submit.disabled = false;
+      submit.textContent = "Entrar";
+    }
+  });
+
+  document.getElementById("btnAuthCancel").addEventListener("click", hideAuth);
+  document.getElementById("btnLogout").addEventListener("click", async ()=>{
+    await supabaseClient.auth.signOut();
+    currentSession = null;
+    updateSessionUI();
+    document.querySelectorAll("nav.tabs button").forEach(b=>b.classList.remove("active"));
+    const indicatorsBtn = document.querySelector('nav.tabs button[data-tab="indicadores"]');
+    indicatorsBtn.classList.add("active");
+    document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+    document.getElementById("view-indicadores").classList.add("active");
+    renderIndicadores();
+  });
+
+  supabaseClient.auth.onAuthStateChange((_event, session)=>{
+    currentSession = session;
+    updateSessionUI();
+    if(!session){
+      document.querySelectorAll("nav.tabs button").forEach(b=>b.classList.remove("active"));
+      document.querySelector('nav.tabs button[data-tab="indicadores"]').classList.add("active");
+      document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+      document.getElementById("view-indicadores").classList.add("active");
+    }
+  });
+
+  // ---------- Init ----------
+  async function init(){
+    const { data } = await supabaseClient.auth.getSession();
+    currentSession = data.session;
+    updateSessionUI();
+    await loadActions();
+    // Indicadores é a área pública inicial.
+    document.querySelectorAll("nav.tabs button").forEach(b=>b.classList.remove("active"));
+    document.querySelector('nav.tabs button[data-tab="indicadores"]').classList.add("active");
+    document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+    document.getElementById("view-indicadores").classList.add("active");
+    renderIndicadores();
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>
